@@ -1,8 +1,12 @@
-import picture
-from flask import Flask, redirect, url_for, request, render_template
+from picture import take_picture, keep_picture, last_picture
+from flask import Flask, redirect, url_for, request, render_template, send_from_directory, make_response
+import os
+
+os.environ['LD_LIBRARY_PATH'] = '/usr/lib/arm-linux-gnueabihf/'
 
 app = Flask(__name__)
-app.config["DEBUG"]=True
+app.static_folder = 'static'
+app.config["DEBUG"] = True
 
 @app.route('/', methods=['POST', 'GET'])
 def choice():
@@ -17,14 +21,27 @@ def choice():
 
 @app.route('/Picture', methods=['POST', 'GET'])
 def picture():
-    """if request.method == 'POST':
+    if request.method == 'POST':
         duration = request.form['duration']
         width = request.form['width']
         height = request.form['height']
-        picture.take_picture(duration, width, height)
-        return 'photo prise' """
+        output_file = take_picture(int(duration), int(width), int(height))
+        print(output_file)
+        return redirect(url_for('keep_pic'))
     return render_template('picture.html')
-    
+
+@app.route('/Display', methods=['POST', 'GET'])
+def keep_pic():
+    #output_file = request.args.get('output_file')
+    if request.method == 'POST':
+        reponse = request.form['reponse']
+        path_file = last_picture()
+        keep_picture(path_file, reponse)
+        return 'yes'
+    else :
+        response = make_response(render_template('display_pic.html'))
+        response.headers['Cache-Control'] = 'no-cache'
+        return response
 
 @app.route('/Video')
 def video():
@@ -43,3 +60,4 @@ def login():
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000)
+
