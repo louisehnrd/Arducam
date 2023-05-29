@@ -1,3 +1,9 @@
+from picamera2 import Picamera2, Preview
+from picamera2.encoders import H264Encoder
+import os
+import time
+import sys
+
 def zoom_picture(zoom_factor):
     arducam.start()
 
@@ -23,3 +29,45 @@ def zoom_picture(zoom_factor):
     arducam.capture_file(output_file)
     
     arducam.close()
+
+
+def video():
+
+    #temps de la capture de la video
+    encoder = H264Encoder(10000000)
+
+    #prise de la video
+    arducam.start_recording(encoder, 'video.h264')
+    time.sleep(10)
+    arducam.stop_recording()
+
+
+
+if len(sys.argv) < 4:
+    print("missing input file")
+    sys.exit()
+if len(sys.argv) > 4:
+    print("too many argument")
+    sys.exit()
+
+#Initialisation des variables
+zoom_factor = int(sys.argv[1])
+width = int(sys.argv[2])
+height = int(sys.argv[3])
+
+# Initialiser la caméra PiCamera
+arducam = Picamera2()
+#arducam.start_preview(Preview.QTGL)
+
+#configuration en plein résolution
+capture_config = arducam.create_still_configuration(main={"size": (width,height)})
+arducam.configure(capture_config)
+
+video_config = arducam.create_video_configuration()
+#arducam.configure(video_config)
+#video()
+
+while(1):
+    zoom_picture(zoom_factor)
+    sleep(600)
+
