@@ -35,7 +35,7 @@ def picture():
             #choice parameters & take picture
             width = int(request.form['width'])
             height = int(request.form['height'])
-            zoom_factor = int(request.form['zoom_factor'])
+            zoom_factor = request.form['zoom_factor']
             lens_position = request.form['lens_position']
             take_picture(width, height,zoom_factor,lens_position)
             return redirect(url_for('picture'))
