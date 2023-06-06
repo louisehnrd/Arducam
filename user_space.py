@@ -1,6 +1,8 @@
-from picture import take_picture, keep_picture, last_picture
+from picture import take_picture, suppr_picture, last_picture, param_zoom
 from flask import Flask, redirect, url_for, request, render_template, send_from_directory, make_response
 import os
+from picamera2 import Picamera2, Metadata
+from libcamera import controls
 
 os.environ['LD_LIBRARY_PATH'] = '/usr/lib/arm-linux-gnueabihf/'
 
@@ -21,43 +23,43 @@ def choice():
 
 @app.route('/Picture', methods=['POST', 'GET'])
 def picture():
+    #initialisation variable
+    global width, height, zoom_factor
+    width = False
+    height = False
+    zoom_factor = False
+    lens_position = False
+
     if request.method == 'POST':
-        duration = request.form['duration']
-        width = request.form['width']
-        height = request.form['height']
-        output_file = take_picture(int(duration), int(width), int(height))
-        print(output_file)
-        return redirect(url_for('keep_pic'))
+        if 'parameters' in request.form :
+            #choice parameters & take picture
+            width = int(request.form['width'])
+            height = int(request.form['height'])
+            zoom_factor = int(request.form['zoom_factor'])
+            lens_position = request.form['lens_position']
+            take_picture(width, height,zoom_factor,lens_position)
+            return redirect(url_for('picture'))
+        
+        elif 'choice' in request.form :
+            if width == False :
+                return "You didn't take a photo. Please choose the photo parameters and click on 'submit'."
+            else : 
+                #display & choice keep picture
+                reponse = request.form['reponse']
+                if reponse == 'non' :
+                    path_file = last_picture()
+                    suppr_picture(path_file)
+                    return redirect(url_for('picture'))
+                else :
+                    print(width)
+                    return 'yes'
+    
     return render_template('picture.html')
 
-@app.route('/Display', methods=['POST', 'GET'])
-def keep_pic():
-    #output_file = request.args.get('output_file')
-    if request.method == 'POST':
-        reponse = request.form['reponse']
-        path_file = last_picture()
-        keep_picture(path_file, reponse)
-        return 'yes'
-    else :
-        response = make_response(render_template('display_pic.html'))
-        response.headers['Cache-Control'] = 'no-cache'
-        return response
-
-@app.route('/Video')
+@app.route('/Video', methods=['POST', 'GET'])
 def video():
-   return 'yes'
+    return 'yes'
 
-"""
-@app.route('/login',methods = ['POST', 'GET'])
-def login():
-   if request.method == 'POST':
-      user = request.form['nm']
-      return redirect(url_for('success',name = user))
-   else:
-      user = request.args.get('nm')
-      return redirect(url_for('success',name = user))
-"""
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000)
-
