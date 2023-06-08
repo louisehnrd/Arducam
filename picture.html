@@ -4,83 +4,47 @@
     <title>
         Picture
     </title>
-        <body>
-            <div id="parameters">
-                <form action="/Picture" method="post">
-                    <p>Choisissez les paramètres souhaités</p>
-                    <p>Enter the width :</p>
-                    <p>
-                        <input type = "text" name = "width" value="4624"/>
-                    </p>
-                    <p>Enter the height :</p>
-                    <p>
-                        <input type = "text" name = "height" value="3472"/>
-                    </p>
-                    <p>Enter zoom factor (1 to 10)</p>
-                    <p>
-                        <input type = "text" name = "zoom_factor" value="1"/>
-                    </p>
-                    <p>Enter lens position (0 to 15)</p>
-                    <p>If you want autofocus, don't enter anything </p>
-                    <p>
-                        <input type = "text" name = "lens_position" value="None"/>
-                    </p>
-                    <p>
-                        <input type="submit" name ="parameters" value="submit" />
-                    </p>
-                </form>
-            </div>
+    <body>
+        <div>
+            <p> A photo is taken every 10 minutes. 
+            If you want to reconfigure the camera, stop the application and restart it. </p>
+        </div>
 
-            <div id="choice">
-                <!--<form action="{{output_file}}" method="post">-->
-                <form action="/Picture" method="post">
-                    <p> Voulez-vous garder cette photo ? </p>
-                    <select name="reponse">                                    
-                        <option value="oui">oui</option>
-                        <option value="non">non</option>
-                    </select>
-                    <input type="submit" name="choice" value="submit">
-                </form>
-            </div>
+        <div id="picture">
+        </div>
 
-            <div id="picture">
-            </div>
-
-            <script>
-                // Fonction pour redimensionner une image
-                function resizeImage(image, newWidth, newHeight) {
-                  // Création d'un élément <canvas>
-                  var canvas = document.createElement('canvas');
-                  canvas.width = newWidth;
-                  canvas.height = newHeight;
-              
-                  // Dessin de l'image sur le canvas avec la nouvelle taille
-                  var context = canvas.getContext('2d');
-                  context.drawImage(image, 0, 0, newWidth, newHeight);
-              
-                  // Conversion du canvas en une nouvelle image
-                  var resizedImage = new Image();
-                  resizedImage.src = canvas.toDataURL('image/jpeg');
-              
-                  // Retourne l'image redimensionnée
-                  return resizedImage;
-                }
-              
-                // Création de l'élément <img>
-                var image = document.createElement('img');
-              
-                // Définition de l'attribut src
-                var timestamp = new Date().getTime(); // Horodatage actuel
-                image.src = '/static/photo_recent.jpg?' + timestamp;
-              
-                // Redimensionnement de l'image à la taille souhaitée (640x480)
-                var newWidth = 640;
-                var newHeight = 480;
-                var resizedImage = resizeImage(image, newWidth, newHeight);
-              
-                // Ajout de l'image redimensionnée à un élément existant avec l'ID "picture"
-                document.getElementById('picture').appendChild(resizedImage);
-            </script>
-              
-        </body>
-</html>
+        <script>
+            // Fonction pour redimensionner une image
+            function resizeImage(image, newWidth, newHeight) {
+              // Création d'un élément <canvas>
+              var canvas = document.createElement('canvas');
+              canvas.width = newWidth;
+              canvas.height = newHeight;
+          
+              // Dessin de l'image sur le canvas avec la nouvelle taille
+              var context = canvas.getContext('2d');
+              context.drawImage(image, 0, 0, newWidth, newHeight);
+          
+              // Conversion du canvas en une nouvelle image
+              var resizedImage = new Image();
+              resizedImage.src = canvas.toDataURL('image/jpeg');
+          
+              // Retourne l'image redimensionnée
+              return resizedImage;
+            }
+          
+            // Création de l'élément <img>
+            var image = document.createElement('img');
+          
+            // Définition de l'attribut src
+            image.src = '/static/photo_recent.jpg';
+          
+            // Redimensionnement de l'image à la taille souhaitée (640x480)
+            var newWidth = 640;
+            var newHeight = 480;
+            var resizedImage = resizeImage(image, newWidth, newHeight);
+          
+            // Ajout de l'image redimensionnée à un élément existant avec l'ID "picture"
+            document.getElementById('picture').appendChild(resizedImage);
+        </script>
+    </body>    
