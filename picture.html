@@ -6,8 +6,13 @@
     </title>
     <body>
         <div>
-            <p> A photo is taken every 10 minutes. 
-            If you want to reconfigure the camera, stop the application and restart it. </p>
+            <form action = "/Picture" method = "post">
+                <p> A photo is taken every 10 minutes. 
+                If you want to reconfigure the camera, click here </p>
+                <p>
+                    <input type="submit" name ="change" value="change" />
+                </p>
+            </form>
         </div>
 
         <div id="picture">
