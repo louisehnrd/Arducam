@@ -1,5 +1,6 @@
 from picamera2 import Picamera2, Metadata
 from libcamera import controls
+import json
 import os
 import time
 from time import sleep
@@ -59,13 +60,18 @@ def take_picture(width, height,zoom_factor, lens_position):
     #zoom
     size,offset = param_zoom(zoom_factor)
     #arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 1 ,"AfTrigger": 0})
-
+    print("size :", size)
+    print("offset:",offset)
     
+
     #focus
     if lens_position == "None":
+        print("size :", size)
+        print("offset:",offset)
         #autofocus
         arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 1 ,"AfTrigger": 0})
         time.sleep(5)
+
     else :
         print(lens_position)
         #manualfocus
@@ -77,7 +83,6 @@ def take_picture(width, height,zoom_factor, lens_position):
     filename = 'photo_{}.jpg'.format(timestamp)
     output_file = os.path.join(os.path.expanduser("~"),"user_space", "static", filename)
 
-    #take a picture
     arducam.capture_file(output_file)
 
     arducam.close()
@@ -87,6 +92,24 @@ def take_picture(width, height,zoom_factor, lens_position):
     subprocess.run(cmd)
 
     #return output_file[1:]
+
+def update_config(on,width,height,zoom_factor,lens_position):    
+    #chargement du fichier json
+    with open('config.json', 'r') as file:
+        config = json.load(file)
+
+    #maj des données
+    config['on'] = on
+    config['width']=width
+    config['height']=height
+    config['zoom_factor']=zoom_factor 
+    config['lens_position']=lens_position
+    print(config)
+        
+    #écrire dans le fichier de config json
+    with open("config.json", "w") as json_file:
+        json.dump(config, json_file)        
+    json_file.close()
 
 def suppr_picture(output_file):
         cmd = ['rm', output_file]
