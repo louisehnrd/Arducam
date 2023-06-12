@@ -30,11 +30,66 @@
                 margin-top: -35%;
             }
 
+            #last_param {
+                float: right;
+                width: 50%;
+                margin-right: -60%;
+            }
+
             #condition{
                 font-size: 60%;
             }
 
         </style>
+        <script>
+            // Fonction pour redimensionner une image
+            function resizeImage(image, newWidth, newHeight) {
+                // Création d'un élément <canvas>
+                var canvas = document.createElement('canvas');
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // Dessin de l'image sur le canvas avec la nouvelle taille
+                var context = canvas.getContext('2d');
+                context.drawImage(image, 0, 0, newWidth, newHeight);
+                
+                // Conversion du canvas en une nouvelle image
+                var resizedImage = new Image();
+                resizedImage.src = canvas.toDataURL('image/jpeg');
+                
+                // Retourne l'image redimensionnée
+                return resizedImage;
+            }
+              
+            // Fonction pour changer automatiquement la photo
+            function changerPhotoAutomatiquement() {
+                // Création de l'élément <img>
+                var image = document.createElement('img');
+                
+                // Définition de l'attribut src
+                image.src = "{{ user_image }}";
+                
+                // Redimensionnement de l'image à la taille souhaitée (640x480)
+                var newWidth = 640;
+                var newHeight = 480;
+                var resizedImage = resizeImage(image, newWidth, newHeight);
+                
+                // Suppression de l'ancienne image
+                var pictureElement = document.getElementById('picture');
+                while (pictureElement.firstChild) {
+                    pictureElement.removeChild(pictureElement.firstChild);
+                }
+                
+                // Ajout de la nouvelle image redimensionnée
+                pictureElement.appendChild(resizedImage);
+            }
+            
+            // Appel initial de la fonction pour changer la photo
+            changerPhotoAutomatiquement();
+            
+            // Appel de la fonction pour changer la photo toutes les 5 secondes
+            setInterval(changerPhotoAutomatiquement, 1000); // Change la photo toutes les 5 secondes (5000 millisecondes)
+        </script>
     </head>
     <body>
         <h1>Configuration of the arducam 64mp</h1>
@@ -77,42 +132,11 @@
 
             <div id="picture">
             </div>
-        </div>
 
-        <script>
-            // Fonction pour redimensionner une image
-            function resizeImage(image, newWidth, newHeight) {
-                // Création d'un élément <canvas>
-                var canvas = document.createElement('canvas');
-                canvas.width = newWidth;
-                canvas.height = newHeight;
-                
-                // Dessin de l'image sur le canvas avec la nouvelle taille
-                var context = canvas.getContext('2d');
-                context.drawImage(image, 0, 0, newWidth, newHeight);
-                
-                // Conversion du canvas en une nouvelle image
-                var resizedImage = new Image();
-                resizedImage.src = canvas.toDataURL('image/jpeg');
-                
-                // Retourne l'image redimensionnée
-                return resizedImage;
-            }
-              
-            // Création de l'élément <img>
-            var image = document.createElement('img');
-              
-            // Définition de l'attribut src
-            image.src = '/static/photo_recent.jpg';
-              
-            // Redimensionnement de l'image à la taille souhaitée (640x480)
-            var newWidth = 640;
-            var newHeight = 480;
-            var resizedImage = resizeImage(image, newWidth, newHeight);
-              
-            // Ajout de l'image redimensionnée à un élément existant avec l'ID "picture"
-            document.getElementById('picture').appendChild(resizedImage);
-        </script>
+            <div id="last_param">
+                <p> width : {{ width }}, height : {{height}}, zoom : {{zoom_factor}}, lens position : {{lens_position}}</p>
+            </div>
+        </div>
               
     </body>
 </html>
