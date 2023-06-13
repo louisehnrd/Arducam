@@ -19,37 +19,49 @@
         </div>
 
         <script>
-            // Fonction pour redimensionner une image
+            //Function for resizing an image
             function resizeImage(image, newWidth, newHeight) {
-              // Création d'un élément <canvas>
-              var canvas = document.createElement('canvas');
-              canvas.width = newWidth;
-              canvas.height = newHeight;
-          
-              // Dessin de l'image sur le canvas avec la nouvelle taille
-              var context = canvas.getContext('2d');
-              context.drawImage(image, 0, 0, newWidth, newHeight);
-          
-              // Conversion du canvas en une nouvelle image
-              var resizedImage = new Image();
-              resizedImage.src = canvas.toDataURL('image/jpeg');
-          
-              // Retourne l'image redimensionnée
-              return resizedImage;
+                //Creating a <canvas> element
+                var canvas = document.createElement('canvas');
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                //Draw the image on the canvas at the new size
+                var context = canvas.getContext('2d');
+                context.drawImage(image, 0, 0, newWidth, newHeight);
+                
+                //Converting the canvas into a new image
+                var resizedImage = new Image();
+                resizedImage.src = canvas.toDataURL('image/jpeg');
+                
+                //Returns the resized image
+                return resizedImage;
             }
-          
-            // Création de l'élément <img>
-            var image = document.createElement('img');
-          
-            // Définition de l'attribut src
-            image.src = '/static/photo_recent.jpg';
-          
-            // Redimensionnement de l'image à la taille souhaitée (640x480)
-            var newWidth = 640;
-            var newHeight = 480;
-            var resizedImage = resizeImage(image, newWidth, newHeight);
-          
-            // Ajout de l'image redimensionnée à un élément existant avec l'ID "picture"
-            document.getElementById('picture').appendChild(resizedImage);
+              
+            //Automatic photo change function
+            function changerPhotoAutomatiquement() {
+                //Creating the <img> element
+                var image = document.createElement('img');
+                
+                //Definition of the src attribute
+                image.src = "{{ user_image }}";
+                
+                //Resize image to desired size (640x480)
+                var newWidth = 640;
+                var newHeight = 480;
+                var resizedImage = resizeImage(image, newWidth, newHeight);
+                
+                //Deleting the old image
+                var pictureElement = document.getElementById('picture');
+                while (pictureElement.firstChild) {
+                    pictureElement.removeChild(pictureElement.firstChild);
+                }
+                
+                //Add the new resized image
+                pictureElement.appendChild(resizedImage);
+            }
+            
+            //Calls up the function to change the photo every seconds
+            setInterval(changerPhotoAutomatiquement, 1000); 
         </script>
     </body>    
