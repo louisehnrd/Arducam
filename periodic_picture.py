@@ -4,8 +4,8 @@ import json
 from picture import take_picture
 
 def take_photos():
-    # Charger la configuration depuis le fichier JSON
-    with open('config.json','r') as config_file:
+    #Load configuration from JSON file
+    with open('/home/camera/user_space/config.json','r') as config_file:
         config = json.load(config_file)
     config_file.close()
 
@@ -17,9 +17,9 @@ def take_photos():
 
         take_picture(width, height,zoom_factor, lens_position)
 
-        print(f"Photos prises avec les paramètres : width={width}, height={height}, zoom={zoom}, lens_position={lens_position}")
+        print(f"Pictures taken with settings : width={width}, height={height}, zoom={zoom_factor}, lens_position={lens_position}")
     else:
-        print("La prise de photos est désactivée dans la configuration.")
+        print("Photo-taking is deactivated in the configuration.")
 
 if __name__ == '__main__':
     take_photos() 
