@@ -7,6 +7,7 @@ from time import sleep
 import subprocess
 from datetime import datetime
 
+"""Function that calculates the zoom"""
 def param_zoom(zoom_factor):
     if zoom_factor == '1' :
         w = 9152
@@ -46,59 +47,49 @@ def param_zoom(zoom_factor):
 
     return size, offset
 
+"""function that configures the camera with the parameters given as arguments and takes a photo"""
 def take_picture(width, height,zoom_factor, lens_position):
     
-    #initialisation camera
+    #camera initialization
     arducam = Picamera2()
     capture_config = arducam.create_still_configuration({"size": (width,height)})
     arducam.align_configuration(capture_config)
     arducam.configure(capture_config)
     
-    #allumage camera
+    #camera ignition
     arducam.start()
 
     #zoom
     size,offset = param_zoom(zoom_factor)
-    #arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 1 ,"AfTrigger": 0})
-    print("size :", size)
-    print("offset:",offset)
-    
 
     #focus
     if lens_position == "None":
-        print("size :", size)
-        print("offset:",offset)
         #autofocus
         arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 1 ,"AfTrigger": 0})
         time.sleep(5)
 
     else :
-        print(lens_position)
         #manualfocus
         arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 0, "LensPosition": int(lens_position)})
         time.sleep(5)
 
-    # Chemin et nom de fichier de sortie de l'image
+    #Image output path and file name
     timestamp = time.strftime('%Y_%m_%d-%H_%M_%S')
     filename = 'photo_{}.jpg'.format(timestamp)
     output_file = os.path.join(os.path.expanduser("~"),"user_space", "static", filename)
 
+    #capture
     arducam.capture_file(output_file)
 
     arducam.close()
 
-    #Commander à exécuter pour copier la photo
-    cmd = ['cp', output_file, '/home/camera/user_space/static/photo_recent.jpg']
-    subprocess.run(cmd)
-
-    #return output_file[1:]
-
+"""Function that updates the json configuration file"""
 def update_config(on,width,height,zoom_factor,lens_position):    
-    #chargement du fichier json
+    #loading the json file
     with open('config.json', 'r') as file:
         config = json.load(file)
 
-    #maj des données
+    #updating data
     config['on'] = on
     config['width']=width
     config['height']=height
@@ -106,47 +97,49 @@ def update_config(on,width,height,zoom_factor,lens_position):
     config['lens_position']=lens_position
     print(config)
         
-    #écrire dans le fichier de config json
+    #write to the json config file
     with open("config.json", "w") as json_file:
         json.dump(config, json_file)        
     json_file.close()
 
+"""function that deletes a picture"""
 def suppr_picture(output_file):
         cmd = ['rm', output_file]
         subprocess.run(cmd)
 
+"""function that returns the dates of the files given as arguments"""
 def date(file, file1):
     date1=datetime(int(file[6:10]), int(file[11:13]), int(file[14:16]), int(file[17:19]), int(file[20:22]))
     date2=datetime(int(file1[6:10]), int(file1[11:13]), int(file1[14:16]), int(file1[17:19]), int(file1[20:22]))
     return date1, date2
 
+"""function that returns the last photo taken"""
 def last_picture():
-    # Chemin du dossier à lister
+    #Path to the folder to be listed
     folder = '/home/camera/user_space/static'
 
-    # Liste tous les fichiers du dossier
+    #Lists all the files in the folder
     files = os.listdir(folder)
     i=0
+
+    #Removes the photo home.png from the list of photos to compare
     for file in files:
-        if file == 'photo_recent.jpg':
+        if file == 'home.png' :
             del files[i]
             break
         i+=1
-    #photo_%YYYY_%mm_%dd-%HH_%MM_%SS
-
+    
+    #test if only one photo was taken
     if len(files)==1:
-        print('la')
         return os.path.join(folder, files[0]) 
     
-    # Affiche le nom de chaque fichier
+    #comparison of picture dates
     recent_file = files[0]
     for i in range(len(files)-1):
         date1,date2=date(files[i],recent_file)
-
-        # Comparaison
+        
         if date1 < date2:
             path_file = os.path.join(folder, recent_file)
-            print("Date/heure 1 est antérieure à Date/heure 2")
         else :
             path_file = os.path.join(folder, files[i])
             recent_file=files[i]
