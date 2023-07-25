@@ -1,4 +1,4 @@
-from picture import take_picture, suppr_picture, last_picture, param_zoom, update_config
+from picture import take_picture, suppr_picture, last_picture, param_zoom, update_config, create_cron
 from flask import Flask, redirect, url_for, request, render_template, send_from_directory, make_response
 import os
 from time import sleep
@@ -18,15 +18,13 @@ def choice():
         valeur_select = request.form['action']
         if valeur_select == 'Picture':
             return redirect(url_for('param'))
-        else :
-           return redirect(url_for('video'))
     return render_template('form.html')
 
 
 @app.route('/Param', methods=['POST', 'GET'])
 def param():
     #variable initialization
-    global width, height, zoom_factor,lens_position
+    global width, height, zoom_factor,lens_position,period
     photo_recent = last_picture()
     picture = os.path.join(app.config['UPLOAD_FOLDER'], photo_recent[-29:])
 
@@ -39,6 +37,8 @@ def param():
         zoom_factor = None
     if 'lens_position' not in globals():
         lens_position = None
+    if 'period' not in globals():
+        period = None
     
     if request.method == 'POST':
         if 'parameters' in request.form :
@@ -47,6 +47,8 @@ def param():
             height = int(request.form['height'])
             zoom_factor = request.form['zoom_factor']
             lens_position = request.form['lens_position']
+            period = request.form['period']
+            create_cron(period)
             take_picture(width, height,zoom_factor,lens_position)
             return redirect(url_for('param'))
         
@@ -74,6 +76,7 @@ def param():
         height = 'None'
         zoom_factor = 'None'
         lens_position = 'None'
+        period = 'None'
     return render_template('param.html', user_image=picture, width=width, height=height, zoom_factor=zoom_factor, lens_position=lens_position)
 
 
@@ -83,14 +86,11 @@ def picture():
     picture = os.path.join(app.config['UPLOAD_FOLDER'], photo_recent[-29:])
     if request.method == 'POST':
         if 'change' in request.form:
+            
             update_config(False,'null','null','null','null')
             return redirect(url_for('param'))
     return render_template('picture.html',user_image=picture) 
 
-
-@app.route('/Video', methods=['POST', 'GET'])
-def video():
-    return 'yes'
 
 
 if __name__ == '__main__':
