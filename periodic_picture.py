@@ -5,7 +5,7 @@ from picture import take_picture
 
 def take_photos():
     #Load configuration from JSON file
-    with open('/home/camera/user_space/config.json','r') as config_file:
+    with open('/home/<name_camera>/user_space/config.json','r') as config_file:
         config = json.load(config_file)
     config_file.close()
 
