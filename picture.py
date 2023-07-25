@@ -6,6 +6,20 @@ import time
 from time import sleep
 import subprocess
 from datetime import datetime
+from crontab import CronTab
+
+def create_cron(period):
+    
+    cron = CronTab(user='<name_camera>')
+    # Parcourir toutes les tâches dans la crontab
+    for job in cron:
+        if job.command == '/home/<name_camera>/user_space/script.sh >> /home/<name_camera>/user_space/sortie.txt 2>&1':
+            # Supprimer la tâche correspondante
+            cron.remove(job)
+    
+    job = cron.new(command=f"/home/<name_camera>/user_space/script.sh >> /home/<name_camera>/user_space/sortie.txt 2>&1")
+    job.minute.every(period)
+    cron.write()
 
 """Function that calculates the zoom"""
 def param_zoom(zoom_factor):
@@ -116,7 +130,7 @@ def date(file, file1):
 """function that returns the last photo taken"""
 def last_picture():
     #Path to the folder to be listed
-    folder = '/home/camera/user_space/static'
+    folder = '/home/<name_camera>/user_space/static'
 
     #Lists all the files in the folder
     files = os.listdir(folder)
