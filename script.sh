@@ -1,2 +1,2 @@
 #!/bin/bash
-python /home/camera/user_space/periodic_picture.py
+python /home/<name_camera>/user_space/periodic_picture.py
