@@ -48,10 +48,10 @@
             <div id="parameters">
                 <form action="/Param" method="post">
                     <h2>Choose the desired parameters</h2>
-                    <p>Enter the width :</p>
+                    <p>Enter the width (640 to 4624):</p>
                     <p>
                         <input type = "text" name = "width" value="4624"/>                        </p>
-                    <p>Enter the height :</p>
+                    <p>Enter the height (480 to 3472) :</p>
                     <p>
                         <input type = "text" name = "height" value="3472"/>
                     </p>
@@ -59,11 +59,14 @@
                     <p>
                         <input type = "text" name = "zoom_factor" value="1"/>
                     </p>
-                    <p>Enter lens position (0 to 15)*</p>
+                    <p>Enter lens position (0 to 15)</p>
                     <p>
-                        <input type = "text" name = "lens_position" value="None"/>
+                        <input type = "text" name = "lens_position" value="0"/>
                     </p>
-                    <p id="condition">*If you want autofocus, don't enter anything </p>
+                    <p>Enter period in minute</p>
+                    <p>
+                        <input type = "text" name = "period" value="10"/>
+                    </p>
                     <p>
                         <input type="submit" name ="parameters" value="submit" />
                     </p>
