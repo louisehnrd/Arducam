@@ -8,15 +8,17 @@ import subprocess
 from datetime import datetime
 from crontab import CronTab
 
+"""Function that creates a cron table by deleting the current jobs and replacing them with jobs from the period given as an argument."""
 def create_cron(period):
     
     cron = CronTab(user='<name_camera>')
-    # Parcourir toutes les tâches dans la crontab
+    # Browse all tasks in the crontab
     for job in cron:
         if job.command == '/home/<name_camera>/user_space/script.sh >> /home/<name_camera>/user_space/sortie.txt 2>&1':
-            # Supprimer la tâche correspondante
+            # Delete the corresponding task
             cron.remove(job)
-    
+
+    #writing a new job
     job = cron.new(command=f"/home/<name_camera>/user_space/script.sh >> /home/<name_camera>/user_space/sortie.txt 2>&1")
     job.minute.every(period)
     cron.write()
@@ -76,16 +78,9 @@ def take_picture(width, height,zoom_factor, lens_position):
     #zoom
     size,offset = param_zoom(zoom_factor)
 
-    #focus
-    if lens_position == "None":
-        #autofocus
-        arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 1 ,"AfTrigger": 0})
-        time.sleep(5)
-
-    else :
-        #manualfocus
-        arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 0, "LensPosition": int(lens_position)})
-        time.sleep(5)
+    #manualfocus
+    arducam.set_controls({"ScalerCrop": offset + size, "AfMode": 0, "LensPosition": int(lens_position)})
+    time.sleep(5)
 
     #Image output path and file name
     timestamp = time.strftime('%Y_%m_%d-%H_%M_%S')
