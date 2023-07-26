@@ -54,7 +54,6 @@ def param():
         
         elif 'choice' in request.form :
             if width is None :
-                #à modifier pour s'assurer que ça ne fasse pas d'erreur
                 return "You didn't take a photo. Please choose the photo parameters and click on 'submit'."
             else : 
                 #display & choice keep picture
@@ -85,8 +84,9 @@ def picture():
     photo_recent = last_picture()
     picture = os.path.join(app.config['UPLOAD_FOLDER'], photo_recent[-29:])
     if request.method == 'POST':
+        #you want to change the settings
         if 'change' in request.form:
-            
+            #the periodic photo is stopped
             update_config(False,'null','null','null','null')
             return redirect(url_for('param'))
     return render_template('picture.html',user_image=picture) 
