@@ -9,6 +9,7 @@ def take_photos():
         config = json.load(config_file)
     config_file.close()
 
+    #If the 'on' key in the json file is true, a photo is taken.
     if config['on']:
         width = config['width']
         height = config['height']
